@@ -1,5 +1,5 @@
 /**
- * TG-DL MITM — 跨域流式下载中转页（插桩版）
+ * TG-DL MITM — 跨域流式下载中转页
  */
 
 (async function () {
@@ -15,7 +15,24 @@
 
   log('registering SW...');
   const reg = await navigator.serviceWorker.register('sw.js');
-  log('SW registered, state:', reg.active ? 'active' : reg.waiting ? 'waiting' : reg.installing ? 'installing' : 'unknown');
+  log('registered, installing:', !!reg.installing, 'waiting:', !!reg.waiting, 'active:', !!reg.active);
+
+  // 等待最新 SW 激活（处理旧版缓存的情况）
+  if (reg.installing || reg.waiting) {
+    const sw = reg.installing || reg.waiting;
+    log('waiting for new SW to activate, current state:', sw.state);
+    if (sw.state !== 'activated') {
+      await new Promise((resolve) => {
+        sw.addEventListener('statechange', function handler() {
+          log('SW state:', sw.state);
+          if (sw.state === 'activated') {
+            sw.removeEventListener('statechange', handler);
+            resolve();
+          }
+        });
+      });
+    }
+  }
 
   await navigator.serviceWorker.ready;
   log('SW ready, controller:', !!navigator.serviceWorker.controller);
@@ -25,8 +42,10 @@
     await new Promise((resolve) => {
       navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
     });
-    log('controller acquired:', !!navigator.serviceWorker.controller);
+    log('controller acquired');
   }
+
+  log('controller scriptURL:', navigator.serviceWorker.controller.scriptURL);
 
   if (window.parent !== window) {
     window.parent.postMessage({ type: 'tgdl-mitm-ready' }, '*');
@@ -68,7 +87,6 @@
       } else {
         ctrl.postMessage(msg);
       }
-      log('forwarded to SW:', type);
     }
   });
 })();
