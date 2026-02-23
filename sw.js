@@ -47,13 +47,12 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  const match = url.pathname.match(/^\/sw\/stream\/([^/]+)\//);
+  const match = url.pathname.match(/^\/sw\/stream\/([^/]+)\/(.+)/);
   if (!match) return;
 
   const downloadId = decodeURIComponent(match[1]);
-  const params = url.searchParams;
-  const fileName = params.get('name') || 'download';
-  const fileSize = params.get('size') || '0';
+  const fileName = decodeURIComponent(match[2]);
+  const fileSize = url.searchParams.get('size') || '0';
 
   console.log('[SW] fetch intercepted:', downloadId.slice(0, 8), fileName, fileSize);
 

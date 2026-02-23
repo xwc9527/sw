@@ -60,9 +60,8 @@
     log('recv:', type, downloadId ? downloadId.slice(0, 8) : '', data ? data.byteLength + 'B' : '');
 
     if (type === 'tgdl-mitm-start') {
-      const streamUrl = '/sw/stream/' + encodeURIComponent(downloadId) + '/file' +
-        '?name=' + encodeURIComponent(fileName) +
-        '&size=' + encodeURIComponent(String(fileSize));
+      const streamUrl = '/sw/stream/' + encodeURIComponent(downloadId) + '/' + encodeURIComponent(fileName) +
+        '?size=' + encodeURIComponent(String(fileSize));
       log('trigger download:', streamUrl);
       const a = document.createElement('a');
       a.href = streamUrl;
