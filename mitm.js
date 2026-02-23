@@ -16,7 +16,7 @@
     return;
   }
 
-  const reg = await navigator.serviceWorker.register('sw.js', { scope: '/' });
+  const reg = await navigator.serviceWorker.register('sw.js');
 
   // 等待 SW 激活并控制本页
   await navigator.serviceWorker.ready;
@@ -34,7 +34,7 @@
 
     if (type === 'tgdl-mitm-start') {
       // 触发浏览器下载：创建 <a> 指向 SW 拦截的 URL
-      const streamUrl = '/stream/' + encodeURIComponent(downloadId) + '/file' +
+      const streamUrl = '/sw/stream/' + encodeURIComponent(downloadId) + '/file' +
         '?name=' + encodeURIComponent(fileName) +
         '&size=' + encodeURIComponent(String(fileSize));
       const a = document.createElement('a');

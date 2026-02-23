@@ -38,7 +38,7 @@ self.addEventListener('message', (event) => {
 // 拦截 /stream/<downloadId>/<filename> 请求
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  const match = url.pathname.match(/^\/stream\/([^/]+)\//);
+  const match = url.pathname.match(/^\/sw\/stream\/([^/]+)\//);
   if (!match) return;
 
   const downloadId = decodeURIComponent(match[1]);
