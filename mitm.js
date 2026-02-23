@@ -87,4 +87,11 @@
       }
     }
   });
+
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'tgdl-browser-cancel' && window.parent !== window) {
+      log('browser cancel received, forwarding to parent');
+      window.parent.postMessage({ type: 'tgdl-browser-cancel', downloadId: e.data.downloadId }, '*');
+    }
+  });
 })();

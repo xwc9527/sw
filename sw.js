@@ -64,6 +64,9 @@ self.addEventListener('fetch', (event) => {
     cancel() {
       console.log('[SW] stream cancelled by consumer');
       activeStreams.delete(downloadId);
+      self.clients.matchAll().then(cls => {
+        cls.forEach(c => c.postMessage({ type: 'tgdl-browser-cancel', downloadId }));
+      });
     },
   });
 
