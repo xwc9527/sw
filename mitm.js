@@ -21,6 +21,13 @@
   // 等待 SW 激活并控制本页
   await navigator.serviceWorker.ready;
 
+  // 首次注册时 controller 可能为 null，等待 claim() 生效
+  if (!navigator.serviceWorker.controller) {
+    await new Promise((resolve) => {
+      navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+    });
+  }
+
   // 通知父页面：SW 已就绪
   if (window.parent !== window) {
     window.parent.postMessage({ type: 'tgdl-mitm-ready' }, '*');
