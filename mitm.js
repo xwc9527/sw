@@ -66,7 +66,6 @@
       log('trigger download:', streamUrl);
       const a = document.createElement('a');
       a.href = streamUrl;
-      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
